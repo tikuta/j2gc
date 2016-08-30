@@ -3,11 +3,17 @@ import Cocoa
 
 class ConfigWindowController: NSWindowController {
     @IBOutlet weak var pathTextField: NSTextField!
+    @IBOutlet weak var infoLabel: NSTextField!
     
     override func windowDidLoad() {
         super.windowDidLoad()
         
         pathTextField.stringValue = Config.manager.destination
+        
+        let attr = [NSForegroundColorAttributeName: NSColor.blueColor(),
+                    NSUnderlineStyleAttributeName: NSUnderlineStyle.StyleSingle.rawValue,
+                    NSLinkAttributeName: "https://github.com/tikuta/j2gc/blob/master/components.md"]
+        infoLabel.attributedStringValue = NSAttributedString.init(string: "Info", attributes: attr)
     }
     
     @IBAction func selectPath(sender: AnyObject) {

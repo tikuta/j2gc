@@ -58,8 +58,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     
     func notify(path: String) {
         let notification = NSUserNotification()
-        notification.title = "gyazoc"
-        notification.informativeText = "Click to upload"
+        notification.title = "j2gc"
+        notification.informativeText = "Click to upload the image to gyazo.com"
         notification.userInfo = ["path": path]
         NSUserNotificationCenter.defaultUserNotificationCenter().deliverNotification(notification)
     }
