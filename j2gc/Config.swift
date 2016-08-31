@@ -14,4 +14,13 @@ class Config {
             defaults.setObject(newValue, forKey: "destination")
         }
     }
+    
+    var rawSuffix: Bool {
+        get {
+            return defaults.boolForKey("rawSuffix") ?? false
+        }
+        set {
+            defaults.setBool(newValue, forKey: "rawSuffix")
+        }
+    }
 }

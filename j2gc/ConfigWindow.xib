@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="infoLabel" destination="lMT-QO-PzY" id="3ZQ-7G-x0h"/>
                 <outlet property="pathTextField" destination="5lp-9a-c3M" id="SdW-CW-dOP"/>
+                <outlet property="rawSuffixCheckBox" destination="4OV-x4-FFB" id="FQd-AZ-rnZ"/>
                 <outlet property="window" destination="jCW-6i-jJS" id="BKA-vC-yYM"/>
             </connections>
         </customObject>
@@ -80,6 +81,13 @@ Gw
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4OV-x4-FFB">
+                        <rect key="frame" x="18" y="92" width="214" height="18"/>
+                        <buttonCell key="cell" type="check" title="Copy the URL with &quot;/raw&quot; suffix" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="kV1-Rv-CX5">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
                 </subviews>
             </view>
             <point key="canvasLocation" x="494" y="383.5"/>

@@ -44,8 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         do {
             try fileManager.createDirectoryAtPath(destDir, withIntermediateDirectories: true, attributes: nil)
         } catch let e as NSError {
-            let alert = NSAlert(error: e)
-            alert.runModal()
+            NSAlert(error: e).runModal()
             return
         }
         
@@ -74,8 +73,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
             return
         }
         
+        let url = Config.manager.rawSuffix ? NSURL.init(string: r.text!)?.URLByAppendingPathComponent("raw") : NSURL.init(string: r.text!)
         NSPasteboard.generalPasteboard().clearContents()
-        NSPasteboard.generalPasteboard().setString(r.text!, forType: NSPasteboardTypeString)
+        NSPasteboard.generalPasteboard().setString(url!.absoluteString, forType: NSPasteboardTypeString)
     }
     
     func userNotificationCenter(center: NSUserNotificationCenter, didActivateNotification notification: NSUserNotification) {

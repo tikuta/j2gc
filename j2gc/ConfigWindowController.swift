@@ -4,11 +4,13 @@ import Cocoa
 class ConfigWindowController: NSWindowController {
     @IBOutlet weak var pathTextField: NSTextField!
     @IBOutlet weak var infoLabel: NSTextField!
+    @IBOutlet weak var rawSuffixCheckBox: NSButton!
     
     override func windowDidLoad() {
         super.windowDidLoad()
         
         pathTextField.stringValue = Config.manager.destination
+        rawSuffixCheckBox.state = Config.manager.rawSuffix ? NSOnState : NSOffState
         
         let attr = [NSForegroundColorAttributeName: NSColor.blueColor(),
                     NSUnderlineStyleAttributeName: NSUnderlineStyle.StyleSingle.rawValue,
@@ -35,6 +37,7 @@ class ConfigWindowController: NSWindowController {
     
     @IBAction func apply(sender: AnyObject) {
         Config.manager.destination = pathTextField.stringValue
+        Config.manager.rawSuffix = rawSuffixCheckBox.state == NSOnState ? true : false
         window!.close()
     }
     
