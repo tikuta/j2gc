@@ -3,6 +3,8 @@ import Cocoa
 
 class ConfigWindowController: NSWindowController {
     @IBOutlet weak var pathTextField: NSTextField!
+    @IBOutlet weak var uploadBehaviorRadioButton: NSButton!
+    @IBOutlet weak var copyBehaviorRadioButton: NSButton!
     @IBOutlet weak var infoLabel: NSTextField!
     @IBOutlet weak var rawSuffixCheckBox: NSButton!
     
@@ -11,6 +13,18 @@ class ConfigWindowController: NSWindowController {
         
         pathTextField.stringValue = Config.manager.destination
         rawSuffixCheckBox.state = Config.manager.rawSuffix ? NSOnState : NSOffState
+        
+        uploadBehaviorRadioButton.tag = BehaviorOnNotificationClick.Upload.rawValue
+        copyBehaviorRadioButton.tag = BehaviorOnNotificationClick.Copy.rawValue
+        
+        switch Config.manager.behavior {
+        case .Upload:
+            uploadBehaviorRadioButton.state = NSOnState
+            rawSuffixCheckBox.isEnabled = true
+        case .Copy:
+            rawSuffixCheckBox.isEnabled = false
+            copyBehaviorRadioButton.state = NSOnState
+        }
         
         let attr = [NSForegroundColorAttributeName: NSColor.blue,
                     NSUnderlineStyleAttributeName: NSUnderlineStyle.styleSingle.rawValue,
@@ -35,9 +49,23 @@ class ConfigWindowController: NSWindowController {
         }
     }
     
+    @IBAction func setBehavior(_ sender: AnyObject) {
+        let radio = sender as! NSButton
+        let b = BehaviorOnNotificationClick(rawValue: radio.tag)!
+        switch b {
+        case .Upload:
+            uploadBehaviorRadioButton.state = NSOnState
+            rawSuffixCheckBox.isEnabled = true
+        case .Copy:
+            rawSuffixCheckBox.isEnabled = false
+            copyBehaviorRadioButton.state = NSOnState
+        }
+    }
+    
     @IBAction func apply(_ sender: AnyObject) {
         Config.manager.destination = pathTextField.stringValue
         Config.manager.rawSuffix = rawSuffixCheckBox.state == NSOnState ? true : false
+        Config.manager.behavior = uploadBehaviorRadioButton.state == NSOnState ? BehaviorOnNotificationClick.Upload : BehaviorOnNotificationClick.Copy
         window!.close()
     }
     

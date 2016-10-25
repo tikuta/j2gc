@@ -58,7 +58,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
     func notify(_ path: String) {
         let notification = NSUserNotification()
         notification.title = "j2gc"
-        notification.informativeText = "Click to upload the image to gyazo.com"
+        switch Config.manager.behavior {
+        case .Upload:
+            notification.informativeText = "Click to upload the image to gyazo.com"
+        case .Copy:
+            notification.informativeText = "Click to copy the image to clipboard"
+        }
         notification.userInfo = ["path": path]
         NSUserNotificationCenter.default.deliver(notification)
     }
@@ -78,9 +83,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         NSPasteboard.general().setString(url!.absoluteString, forType: NSPasteboardTypeString)
     }
     
+    func copy(_ path: String) {
+        let image = NSImage(contentsOfFile: path)!
+        NSPasteboard.general().clearContents()
+        NSPasteboard.general().writeObjects([image])
+    }
+    
     func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         let userInfo = notification.userInfo as! [String: String]
-        upload(userInfo["path"]!)
+        
+        switch Config.manager.behavior {
+        case .Upload:
+            upload(userInfo["path"]!)
+        case .Copy:
+            copy(userInfo["path"]!)
+        }
     }
     
     func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {

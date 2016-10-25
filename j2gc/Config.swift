@@ -1,5 +1,10 @@
 import Foundation
 
+enum BehaviorOnNotificationClick: Int {
+    case Upload = 10
+    case Copy = 20
+}
+
 class Config {
     fileprivate init() {}
     static let manager = Config()
@@ -21,6 +26,15 @@ class Config {
         }
         set {
             defaults.set(newValue, forKey: "rawSuffix")
+        }
+    }
+    
+    var behavior: BehaviorOnNotificationClick {
+        get {
+            return BehaviorOnNotificationClick(rawValue: defaults.integer(forKey: "behavior")) ?? BehaviorOnNotificationClick.Upload
+        }
+        set {
+            defaults.set(newValue.rawValue, forKey: "behavior")
         }
     }
 }
