@@ -6,9 +6,9 @@ import Just
 class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDelegate {
     let wc = ConfigWindowController(windowNibName: "ConfigWindow")
 
-    let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSSquareStatusItemLength)
+    let statusItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
     
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem.button!.image = NSImage(named: "StatusBarButtonImage")
         
         let menu = NSMenu()
@@ -18,81 +18,81 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSUserNotificationCenterDele
         
         statusItem.menu = menu
         
-        NSUserNotificationCenter.defaultUserNotificationCenter().delegate = self
+        NSUserNotificationCenter.default.delegate = self
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
+    func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
     
-    func capture(sender: AnyObject) {
-        let fileManager = NSFileManager.defaultManager()
+    func capture(_ sender: AnyObject) {
+        let fileManager = FileManager.default
         
         let destDir = Config.manager.destination.characters.count != 0 ? Config.manager.destination : NSTemporaryDirectory()
-        let formatter = NSDateFormatter()
+        let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd_HHmmss"
-        formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
-        let basename = formatter.stringFromDate(NSDate())
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        let basename = formatter.string(from: Date())
         
-        var destPath = (destDir as NSString).stringByAppendingPathComponent(String(format: "%@.png", basename))
+        var destPath = (destDir as NSString).appendingPathComponent(String(format: "%@.png", basename))
         var counter: Int = 0
-        while fileManager.fileExistsAtPath(destPath) {
-            destPath = (destDir as NSString).stringByAppendingPathComponent(String(format: "%@_%d.png", basename, counter))
+        while fileManager.fileExists(atPath: destPath) {
+            destPath = (destDir as NSString).appendingPathComponent(String(format: "%@_%d.png", basename, counter))
             counter += 1
         }
         
         do {
-            try fileManager.createDirectoryAtPath(destDir, withIntermediateDirectories: true, attributes: nil)
+            try fileManager.createDirectory(atPath: destDir, withIntermediateDirectories: true, attributes: nil)
         } catch let e as NSError {
             NSAlert(error: e).runModal()
             return
         }
         
-        NSTask.launchedTaskWithLaunchPath("/usr/sbin/screencapture", arguments: ["-i", destPath]).waitUntilExit()
+        Process.launchedProcess(launchPath: "/usr/sbin/screencapture", arguments: ["-i", destPath]).waitUntilExit()
         
-        if fileManager.fileExistsAtPath(destPath) {
+        if fileManager.fileExists(atPath: destPath) {
             notify(destPath)
         }
     }
     
-    func notify(path: String) {
+    func notify(_ path: String) {
         let notification = NSUserNotification()
         notification.title = "j2gc"
         notification.informativeText = "Click to upload the image to gyazo.com"
         notification.userInfo = ["path": path]
-        NSUserNotificationCenter.defaultUserNotificationCenter().deliverNotification(notification)
+        NSUserNotificationCenter.default.deliver(notification)
     }
     
-    func upload(path: String) {        
+    func upload(_ path: String) {
         let r = Just.post("https://upload.gyazo.com/upload.cgi",
                   data: ["filename": (path as NSString).lastPathComponent],
-                  files: ["imagedata": .URL(NSURL.init(fileURLWithPath: path), nil)])
+                  files: ["imagedata": .url(URL.init(fileURLWithPath: path), nil)])
         
         if let e = r.error {
             NSAlert(error: e).runModal()
             return
         }
         
-        let url = Config.manager.rawSuffix ? NSURL.init(string: r.text!)?.URLByAppendingPathComponent("raw") : NSURL.init(string: r.text!)
-        NSPasteboard.generalPasteboard().clearContents()
-        NSPasteboard.generalPasteboard().setString(url!.absoluteString, forType: NSPasteboardTypeString)
+        let url = Config.manager.rawSuffix ? URL.init(string: r.text!)?.appendingPathComponent("raw") : URL.init(string: r.text!)
+        NSPasteboard.general().clearContents()
+        NSPasteboard.general().setString(url!.absoluteString, forType: NSPasteboardTypeString)
     }
     
-    func userNotificationCenter(center: NSUserNotificationCenter, didActivateNotification notification: NSUserNotification) {
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         let userInfo = notification.userInfo as! [String: String]
         upload(userInfo["path"]!)
     }
     
-    func userNotificationCenter(center: NSUserNotificationCenter, shouldPresentNotification notification: NSUserNotification) -> Bool {
+    func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
         return true
     }
     
-    func config(sender: AnyObject) {
+    func config(_ sender: AnyObject) {
         wc.showWindow(nil)
-        NSApp.activateIgnoringOtherApps(true)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
-    func quit(sender: AnyObject) {
+    func quit(_ sender: AnyObject) {
         NSApp.terminate(self)
     }
 }

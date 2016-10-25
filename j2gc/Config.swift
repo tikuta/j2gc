@@ -1,26 +1,26 @@
 import Foundation
 
 class Config {
-    private init() {}
+    fileprivate init() {}
     static let manager = Config()
     
-    private let defaults = NSUserDefaults.standardUserDefaults()
+    fileprivate let defaults = UserDefaults.standard
     
     var destination: String {
         get {
-            return defaults.stringForKey("destination") ?? ""
+            return defaults.string(forKey: "destination") ?? ""
         }
         set {
-            defaults.setObject(newValue, forKey: "destination")
+            defaults.set(newValue, forKey: "destination")
         }
     }
     
     var rawSuffix: Bool {
         get {
-            return defaults.boolForKey("rawSuffix") ?? false
+            return defaults.bool(forKey: "rawSuffix")
         }
         set {
-            defaults.setBool(newValue, forKey: "rawSuffix")
+            defaults.set(newValue, forKey: "rawSuffix")
         }
     }
 }
